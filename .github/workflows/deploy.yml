@@ -1,0 +1,82 @@
+name: Deploy Project1 on Push
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  web-deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+
+      - name: Cache Composer
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+
+      - name: Install PHP Dependencies
+        run: composer install --optimize-autoloader --no-dev --no-progress --prefer-dist
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Cache npm
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+
+      - name: Build Frontend
+        run: |
+          npm ci --production
+          npm run build
+
+      - name: Sync Files via SSH
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SOURCE: "."
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}
+          EXCLUDE: |
+            /.git/
+            /node_modules/
+            /tests/
+            /.github/
+            /phpunit.xml
+            /LICENSE
+            /README.md
+            /README.APPLICATION.md
+            /README.STANDARDS.md
+            /info.php
+
+      - name: Execute Remote Post-Deploy Commands
+        uses: appleseed/ssh-action@v2
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.REMOTE_PORT }}
+          script: |
+            cd ${{ secrets.REMOTE_TARGET }}
+            chmod -R 775 storage bootstrap/cache
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan optimize:clear

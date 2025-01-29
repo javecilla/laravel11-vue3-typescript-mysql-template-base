@@ -6,6 +6,6 @@
         <title>{{ env('APP_NAME') }}</title>
         @vite(['resources/css/app.css', 'resources/js/app.ts'])
     </head>
-    <body id="app">
+    <body id="app" style="background-color: #f3f3f3;">
     </body>
 </html>

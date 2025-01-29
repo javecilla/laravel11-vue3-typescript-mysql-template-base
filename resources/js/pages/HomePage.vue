@@ -1,18 +1,12 @@
-<!-- src/pages/HomePage.vue -->
 <template>
     <div class="bg-white text-dark p-4 rounded-lg shadow-md">
-        <h2 class="text-2xl font-bold mb-4">Project built with:</h2>
-        <ul class="list-disc list-inside">
-            <li>Laravel 11</li>
-            <li>Vue 3 (Vite + TypeScript)</li>
-            <li>Tailwind CSS</li>
-            <li>MySQL</li>
-            <li>Docker</li>
-        </ul>
+        <h2 class="text-2xl font-bold mb-4">
+            javecilla:// laravel11-vue3-typescript-mysql-template-base
+        </h2>
     </div>
     <div class="flex justify-center mt-8 pb-8">
         <div
-            class="w-full max-w-4xl p-5 text-center bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700"
+            class="w-full max-w-4xl p-5 text-center bg-white rounded-lg shadow-md dark:bg-gray-800"
         >
             <div v-if="loading" class="text-dark-500">Loading...</div>
             <div v-else-if="errorMessage" class="text-red-500">

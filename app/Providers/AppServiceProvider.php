@@ -84,7 +84,7 @@ class AppServiceProvider extends ServiceProvider
             return Response::json([
                 'success' => true,
                 'data' => $paginator->items(),
-                'pagination' => [
+                'meta' => [
                     'total' => $paginator->total(),
                     'count' => $paginator->count(),
                     'per_page' => $paginator->perPage(),

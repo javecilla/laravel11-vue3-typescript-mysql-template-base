@@ -1,11 +1,24 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Response;
+use App\Http\Controllers\Api\UserController;
 
 Route::middleware('api')->group(function () {
-    Route::get('/test1', function() {
+    Route::controller(UserController::class)->group(function () {
+        Route::get('/users/paginate', 'getPaginatedUsers');
+    });
+
+
+
+
+
+
+
+
+
+
+    Route::get('/test1', function () {
         $data = [
             [
                 'email' => 'test1@gmail.com',
@@ -16,12 +29,12 @@ Route::middleware('api')->group(function () {
                 'email' => 'test2@gmail.com',
                 'name' => 'test2 name',
                 'address' => 'test2 address'
-            ] 
+            ]
         ];
         return Response::success($data, 'testing');
     });
 
-    Route::get('/test2', function() {
+    Route::get('/test2', function () {
         $data = [
             'labels' => [
                 'January',
